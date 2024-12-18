@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
+  const scrollRef = useRef<HTMLUListElement>(null)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -13,6 +14,20 @@ export default function Header() {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  const sections = ['About', 'Experience', 'Projects', 'Skills', 'Contact']
+
+  const handleScrollLeft = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: -100, behavior: 'smooth' })
+    }
+  }
+
+  const handleScrollRight = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: 100, behavior: 'smooth' })
+    }
+  }
 
   return (
     <motion.header
@@ -23,13 +38,27 @@ export default function Header() {
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <nav className="container mx-auto px-6 py-4">
-        <ul className="flex justify-center space-x-8">
-          {['About', 'Experience', 'Projects', 'Skills', 'Contact'].map((item) => (
-            <motion.li key={item} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+      <nav className="container mx-auto px-6 py-4 relative">
+        <div className="md:hidden absolute left-0 top-1/2 transform -translate-y-1/2 z-10">
+          <button onClick={handleScrollLeft} className="p-2 bg-gray-800/50 rounded-full text-white">
+            &lt;
+          </button>
+        </div>
+        <div className="md:hidden absolute right-0 top-1/2 transform -translate-y-1/2 z-10">
+          <button onClick={handleScrollRight} className="p-2 bg-gray-800/50 rounded-full text-white">
+            &gt;
+          </button>
+        </div>
+        <ul 
+          ref={scrollRef}
+          className="flex justify-start md:justify-center space-x-8 overflow-x-auto scrollbar-hide"
+          style={{ scrollBehavior: 'smooth', WebkitOverflowScrolling: 'touch' }}
+        >
+          {sections.map((item) => (
+            <motion.li key={item} className="flex-shrink-0" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
               <a
                 href={`#${item.toLowerCase()}`}
-                className="text-lg font-semibold text-white hover:text-pink-400 transition-colors"
+                className="text-lg font-semibold text-white hover:text-pink-400 transition-colors whitespace-nowrap"
               >
                 {item}
               </a>
