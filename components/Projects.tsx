@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useRef } from 'react'
-import { motion, AnimatePresence, useInView } from 'framer-motion'
+import { useRef } from 'react'
+import { motion, useScroll, useTransform } from 'framer-motion'
 import Image from 'next/image'
 
 export default function Projects() {
@@ -30,111 +30,76 @@ export default function Projects() {
     },
   ]
 
-  const [expandedProject, setExpandedProject] = useState<number | null>(null)
-  const sectionRef = useRef(null)
-  const isInView = useInView(sectionRef, { once: true, amount: 0.2 })
+  return (
+    <div className="container mx-auto px-6">
+      <motion.h2
+        className="text-5xl font-bold mb-12 text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-600"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        Projects
+      </motion.h2>
+      <div className="space-y-32">
+        {projects.map((project, index) => (
+          <ProjectCard key={index} project={project} />
+        ))}
+      </div>
+    </div>
+  )
+}
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
-  }
+function ProjectCard({ project }: { project: { 
+  title: string;
+  description: string;
+  details: string[];
+  image: string;
+} }) {
+  const ref = useRef(null)
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"]
+  })
 
-  const projectVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: {
-        type: "spring",
-        stiffness: 100,
-        damping: 12,
-      }
-    },
-  }
+  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0])
+  const scale = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0.8, 1, 1, 0.8])
+  const y = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [100, 0, 0, -100])
 
   return (
-    <section id="projects" className="py-20 bg-gray-900/50" ref={sectionRef}>
-      <div className="container mx-auto px-6">
-        <motion.h2
-          className="text-5xl font-bold mb-12 text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-600"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          Projects
-        </motion.h2>
-        <motion.div 
-          className="space-y-12"
-          variants={containerVariants}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
-        >
-          {projects.map((project, index) => (
-            <motion.div
-              key={index}
-              className="bg-white/10 backdrop-blur-md rounded-xl overflow-hidden shadow-xl"
-              variants={projectVariants}
-            >
-              <div className="md:flex">
-                <div className="md:w-1/2">
-                  <Image
-                    src={project.image}
-                    alt={project.title}
-                    width={400}
-                    height={300}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="p-6 md:w-1/2 flex flex-col justify-between">
-                  <div>
-                    <h3 className="text-2xl font-semibold text-purple-400 mb-4">{project.title}</h3>
-                    <p className="text-gray-300 mb-4">{project.description}</p>
-                  </div>
-                  <div className="flex justify-end">
-                    <motion.button
-                      onClick={() => setExpandedProject(expandedProject === index ? null : index)}
-                      className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                        expandedProject === index
-                          ? 'bg-purple-600 text-white'
-                          : 'bg-purple-200 text-purple-800 hover:bg-purple-300'
-                      }`}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      aria-expanded={expandedProject === index}
-                      aria-controls={`project-details-${index}`}
-                    >
-                      {expandedProject === index ? 'Hide Details' : 'View Details'}
-                    </motion.button>
-                  </div>
-                  <AnimatePresence>
-                    {expandedProject === index && (
-                      <motion.div
-                        id={`project-details-${index}`}
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <ul className="list-disc list-inside text-gray-300 mb-4">
-                          {project.details.map((detail, idx) => (
-                            <li key={idx} className="mb-2">{detail}</li>
-                          ))}
-                        </ul>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
+    <motion.div
+      ref={ref}
+      style={{ opacity, scale, y }}
+      className="bg-white/10 backdrop-blur-md rounded-xl overflow-hidden shadow-xl"
+    >
+      <div className="md:flex">
+        <div className="md:w-1/2">
+          <Image
+            src={project.image}
+            alt={project.title}
+            width={400}
+            height={300}
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div className="p-6 md:w-1/2 flex flex-col justify-between">
+          <div>
+            <h3 className="text-2xl font-semibold text-purple-400 mb-4">{project.title}</h3>
+            <p className="text-gray-300 mb-4">{project.description}</p>
+          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+          >
+            <ul className="list-disc list-inside text-gray-300 mb-4">
+              {project.details.map((detail: string, idx: number) => (
+                <li key={idx} className="mb-2">{detail}</li>
+              ))}
+            </ul>
+          </motion.div>
+        </div>
       </div>
-    </section>
+    </motion.div>
   )
 }
 

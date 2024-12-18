@@ -29,6 +29,17 @@ export default function Header() {
     }
   }
 
+  const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
+    e.preventDefault()
+    const targetElement = document.getElementById(targetId)
+    if (targetElement) {
+      window.scrollTo({
+        top: targetElement.offsetTop - 80, // Adjust for header height
+        behavior: 'smooth'
+      })
+    }
+  }
+
   return (
     <motion.header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -58,6 +69,7 @@ export default function Header() {
             <motion.li key={item} className="flex-shrink-0" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
               <a
                 href={`#${item.toLowerCase()}`}
+                onClick={(e) => handleSmoothScroll(e, item.toLowerCase())}
                 className="text-lg font-semibold text-white hover:text-pink-400 transition-colors whitespace-nowrap"
               >
                 {item}
