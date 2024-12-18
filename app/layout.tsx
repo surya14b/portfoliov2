@@ -1,5 +1,6 @@
 import './globals.css'
 import { Inter } from 'next/font/google'
+import ParticleBackground from '@/components/ParticleBackground'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -16,6 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} bg-gradient-to-br from-gray-900 via-purple-900 to-violet-800 min-h-screen text-white`}>
+        <ParticleBackground />
         {children}
       </body>
     </html>
