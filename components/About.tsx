@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import Image from 'next/image'
+import { Download } from 'lucide-react'
 
 export default function About() {
   return (
@@ -34,8 +35,8 @@ export default function About() {
               transition={{ type: "spring", stiffness: 300, damping: 10 }}
             >
               <Image
-                src="/images/profile.jpeg"
-                alt="Suryakanth Gunnam at Arches National Park"
+                src="/profile-picture.jpg"
+                alt="Suryakanth Gunnam"
                 fill
                 className="rounded-full object-cover shadow-lg"
                 sizes="(max-width: 768px) 100vw, 50vw"
@@ -52,6 +53,16 @@ export default function About() {
                 When not coding, I enjoy exploring national parks and experiencing the great outdoors, 
                 bringing the same sense of adventure and problem-solving to both my professional and personal life.
               </p>
+              <motion.a
+                href="/Suryakanth(s)_Gunnam_SoftwareDeveloper.pdf"
+                download
+                className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-md mt-6 hover:bg-purple-700 transition-colors duration-300"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Download className="w-5 h-5 mr-2" />
+                Download Resume
+              </motion.a>
             </div>
           </motion.div>
         </div>
@@ -59,4 +70,3 @@ export default function About() {
     </section>
   )
 }
-
