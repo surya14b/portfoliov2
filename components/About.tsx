@@ -35,7 +35,7 @@ export default function About() {
               transition={{ type: "spring", stiffness: 300, damping: 10 }}
             >
               <Image
-                src="/profile-picture.jpg"
+                src="/images/profile.jpeg"
                 alt="Suryakanth Gunnam"
                 fill
                 className="rounded-full object-cover shadow-lg"
